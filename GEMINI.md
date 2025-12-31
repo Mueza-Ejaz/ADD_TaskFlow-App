@@ -1,4 +1,4 @@
-# Qwen Code Rules
+# Gemini CLI Rules
 
 This file is generated during init for the selected agent.
 
