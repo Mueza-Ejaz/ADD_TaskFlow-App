@@ -1,0 +1,384 @@
+# Create Phase 2: User Authentication Implementation Plan
+
+## PROJECT CONTEXT:
+ADD_TaskFlow-App Phase 1 is complete. We have:
+- Next.js 16 frontend running on localhost:3000
+- FastAPI backend running on localhost:8000
+- Design system with 6 UI components
+- Neon PostgreSQL database connected
+- Environment variables configured
+
+Now we need to implement Phase 2: User Authentication.
+
+## YOUR TASK:
+Create a detailed implementation plan for Phase 2 in markdown format. The plan should be actionable, with clear phases, tasks, and deliverables.
+
+## OUTPUT FILE:
+Save to: `specs/P2-2 User Authentication/plan.md`
+
+## PLAN REQUIREMENTS (Markdown Format):
+
+```markdown
+# Phase 2: User Authentication - Implementation Plan
+
+## 1. Architecture Overview
+
+### Authentication Flow Diagram
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ Frontend │ │ Backend │ │ Database │
+│ (Next.js 16) │ │ (FastAPI) │ │ (PostgreSQL) │
+├─────────────────┤ ├─────────────────┤ ├─────────────────┤
+│ 1. Signup Form │────▶│ /auth/signup │────▶│ Create User │
+│ (Better Auth)│ │ (Create user, │ │ in users table │
+│ │ │ hash password,│ │ │
+│ │ │ return JWT) │ │ │
+│ │ │ │ │ │
+│ 2. Login Form │────▶│ /auth/login │────▶│ Verify User │
+│ (Better Auth)│ │ (Check creds, │ │ credentials │
+│ │ │ return JWT) │ │ │
+│ │ │ │ │ │
+│ 3. Dashboard │────▶│ /auth/me │────▶│ Get user data │
+│ (Protected) │ │ (Validate JWT, │ │ by user_id │
+│ │ │ return user) │ │ │
+│ │ │ │ │ │
+│ 4. API Requests │────▶│ Protected │────▶│ User-specific │
+│ (with JWT) │ │ Endpoints │ │ data queries │
+│ │ │ (Check JWT) │ │ │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+
+
+### Technology Stack for Authentication:
+- **Frontend**: Next.js 16 + Better Auth + React Context
+- **Backend**: FastAPI + Python-Jose (JWT) + Passlib (bcrypt)
+- **Database**: Neon PostgreSQL (users table)
+- **Token Storage**: HTTP-only cookies (recommended) or secure localStorage
+- **Password Hashing**: bcrypt with 12 rounds minimum
+
+## 2. Implementation Phases
+
+### Phase 2A: Backend Authentication Foundation (Day 1-2)
+
+#### Goal: Set up backend authentication system
+**Tasks:**
+1. [ ] **Database Schema Update**
+   - Create users table migration
+   - Add foreign key from tasks to users
+   - Update SQLModel User model
+
+2. [ ] **Password Security Setup**
+   - Install passlib[bcrypt]
+   - Create password hashing utility
+   - Implement password validation
+
+3. [ ] **JWT Token Management**
+   - Install python-jose[cryptography]
+   - Create token generation functions
+   - Set up token validation middleware
+
+4. [ ] **Authentication Endpoints**
+   - POST /api/v1/auth/signup
+   - POST /api/v1/auth/login
+   - POST /api/v1/auth/logout
+   - GET /api/v1/auth/me
+
+5. [ ] **Protected Route Middleware**
+   - Create dependency for authenticated users
+   - Implement JWT token extraction
+   - Add user to request state
+
+**Deliverables:**
+- Complete users table in database
+- Working authentication endpoints
+- JWT token generation/validation
+- Password hashing utilities
+- Protected route middleware
+
+**Time Estimate:** 8-10 hours
+
+### Phase 2B: Frontend Authentication Setup (Day 2-3)
+
+#### Goal: Implement frontend authentication with Better Auth
+**Tasks:**
+1. [ ] **Better Auth Configuration**
+   - Install Better Auth package
+   - Configure auth options in Next.js
+   - Set up auth routes and callbacks
+
+2. [ ] **Signup Page Implementation**
+   - Create `app/(auth)/signup/page.tsx`
+   - Build signup form with validation
+   - Integrate with Better Auth signup
+   - Handle form submission and errors
+
+3. [ ] **Login Page Implementation**
+   - Create `app/(auth)/login/page.tsx`
+   - Build login form with validation
+   - Integrate with Better Auth login
+   - Handle form submission and errors
+
+4. [ ] **User Context/Provider**
+   - Create AuthContext with React Context
+   - Implement useAuth hook
+   - Manage user state and tokens
+
+5. [ ] **Token Management**
+   - Set up token storage (cookies/localStorage)
+   - Create API client with token injection
+   - Handle token refresh automatically
+
+**Deliverables:**
+- Working signup and login pages
+- Better Auth fully configured
+- User context/provider
+- Token management system
+- API client with auth support
+
+**Time Estimate:** 8-10 hours
+
+### Phase 2C: Protected Routes & Middleware (Day 3-4)
+
+#### Goal: Secure both frontend and backend routes
+**Tasks:**
+1. [ ] **Frontend Route Protection**
+   - Create `ProtectedRoute` component
+   - Implement Next.js middleware for auth
+   - Set up route redirection logic
+
+2. [ ] **Dashboard Page**
+   - Create `app/dashboard/page.tsx`
+   - Display user information
+   - Show authentication status
+   - Add logout functionality
+
+3. [ ] **Backend Route Protection**
+   - Apply auth middleware to task endpoints
+   - Test protected endpoints with and without tokens
+   - Implement user-specific data filtering
+
+4. [ ] **Logout Implementation**
+   - Create logout endpoint (backend)
+   - Implement logout function (frontend)
+   - Clear tokens and user state
+
+5. [ ] **Session Management**
+   - Handle token expiration
+   - Implement auto-logout on token expiry
+   - Add session persistence across page reloads
+
+**Deliverables:**
+- Protected dashboard page
+- Working route protection (frontend & backend)
+- Complete logout functionality
+- Session management system
+
+**Time Estimate:** 6-8 hours
+
+### Phase 2D: Integration & Security (Day 4-5)
+
+#### Goal: Ensure seamless integration and security
+**Tasks:**
+1. [ ] **Frontend-Backend Integration**
+   - Test complete auth flow end-to-end
+   - Fix CORS issues if any
+   - Ensure token flow works correctly
+
+2. [ ] **Security Hardening**
+   - Implement rate limiting on auth endpoints
+   - Add input validation on all auth forms
+   - Set secure cookie flags (httpOnly, secure, sameSite)
+   - Add password strength requirements
+
+3. [ ] **Error Handling**
+   - Create consistent error responses
+   - Implement error boundaries
+   - Add user-friendly error messages
+
+4. [ ] **Environment Configuration**
+   - Update environment variables for auth
+   - Add JWT secret to backend .env
+   - Configure Better Auth secrets
+
+5. [ ] **Performance Optimization**
+   - Optimize auth API calls
+   - Implement loading states
+   - Add skeleton screens for auth pages
+
+**Deliverables:**
+- Secure, production-ready auth system
+- Comprehensive error handling
+- Optimized performance
+- Complete environment setup
+
+**Time Estimate:** 6-8 hours
+
+### Phase 2E: Testing & Documentation (Day 5-6)
+
+#### Goal: Ensure reliability and create documentation
+**Tasks:**
+1. [ ] **Unit Testing**
+   - Test password hashing functions
+   - Test JWT token generation/validation
+   - Test auth utility functions
+
+2. [ ] **Integration Testing**
+   - Test signup/login API endpoints
+   - Test protected routes with valid/invalid tokens
+   - Test complete auth flow
+
+3. [ ] **End-to-End Testing**
+   - Create Playwright tests for auth flow
+   - Test user registration and login
+   - Test protected route access
+
+4. [ ] **Security Testing**
+   - Test for common vulnerabilities
+   - Verify password is never exposed
+   - Check token security
+
+5. [ ] **Documentation**
+   - Update README with auth setup
+   - Create API documentation for auth endpoints
+   - Add usage examples for auth components
+
+**Deliverables:**
+- Comprehensive test suite
+- Security audit report
+- Complete documentation
+- Phase 2 ready for production
+
+**Time Estimate:** 6-8 hours
+
+## 3. Integration Points with Phase 1
+
+### Updates to Existing Components:
+1. **API Client Enhancement**
+   - Modify existing `lib/api.ts` to include auth headers
+   - Add token refresh logic
+   - Handle 401 errors automatically
+
+2. **Design System Components**
+   - Use existing Button, Input, Card components in auth forms
+   - Apply design system colors and typography
+   - Ensure consistency with Phase 1 design
+
+3. **Layout Updates**
+   - Update main layout to include auth state
+   - Add logout button to header
+   - Show user information in navigation
+
+### Database Schema Evolution:
+```sql
+-- From Phase 1 tasks table (to be updated)
+ALTER TABLE tasks ADD COLUMN user_id INTEGER;
+
+-- New users table for Phase 2
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add foreign key constraint
+ALTER TABLE tasks ADD CONSTRAINT fk_user
+    FOREIGN KEY (user_id) REFERENCES users(id);
+```
+
+### 4. Testing Strategy
+Test Pyramid for Authentication:
+```
+        ┌─────────────────────┐
+        │   E2E Tests (2-3)   │
+        │  Complete auth flow │
+        └──────────┬──────────┘
+                   │
+        ┌──────────▼──────────┐
+        │ Integration Tests   │
+        │  API endpoints      │
+        │  Frontend-Backend   │
+        └──────────┬──────────┘
+                   │
+        ┌──────────▼──────────┐  ┌──────────────┐
+        │   Unit Tests        │  │ Security     │
+        │  Utils, helpers     │  │ Tests        │
+        └─────────────────────┘  └──────────────┘
+```
+
+Test Coverage Goals:
+- Backend: 90%+ coverage for auth modules
+- Frontend: 80%+ coverage for auth components
+- Security: 100% of auth-related security features tested
+
+### 5. Security Considerations
+Critical Security Measures:
+- **Password Security**
+    - Use bcrypt with minimum 12 rounds
+    - Never store plain text passwords
+    - Validate password strength (min 8 chars, mixed case, numbers)
+- **Token Security**
+    - Use HTTP-only cookies for token storage
+    - Set short expiration times (24h access, 7d refresh)
+    - Implement token blacklisting for logout
+- **API Security**
+    - Rate limiting on auth endpoints (max 5 attempts/min)
+    - Input validation on all endpoints
+    - SQL injection prevention via SQLModel
+- **Frontend Security**
+    - XSS protection for auth forms
+    - Secure token storage (not in localStorage if possible)
+    - CSRF protection for state-changing operations
+
+Security Checklist:
+- [ ] Passwords hashed with bcrypt (12+ rounds)
+- [ ] JWT tokens with strong secret (32+ chars)
+- [ ] HTTP-only cookies for token storage
+- [ ] Rate limiting implemented
+- [ ] Input validation on all forms
+- [ ] No sensitive data in logs
+- [ ] CORS properly configured
+- [ ] Environment variables for all secrets
+
+### 6. Success Validation
+Validation Checklist:
+- **Backend Validation:**
+    - POST /auth/signup creates user and returns tokens (201)
+    - POST /auth/login validates credentials and returns tokens (200)
+    - GET /auth/me returns user data with valid token (200)
+    - GET /auth/me returns 401 without valid token
+    - Protected task endpoints require authentication
+    - Passwords are hashed in database
+- **Frontend Validation:**
+    - Signup page creates account and redirects to dashboard
+    - Login page authenticates and redirects to dashboard
+    - Unauthenticated users redirected from /dashboard
+    - User context provides user data throughout app
+    - Logout clears tokens and redirects to login
+    - Tokens automatically attached to API requests
+- **Integration Validation:**
+    - Complete flow: Signup → Login → Dashboard → Logout works
+    - Session persists across page reloads
+    - No CORS errors during auth operations
+    - Mobile-responsive auth pages
+    - Error messages helpful and user-friendly
+- **Performance Validation:**
+    - Login response time < 200ms
+    - Signup response time < 300ms
+    - Page load time < 2 seconds
+    - No memory leaks in auth components
+
+### 7. Phase 3 Preparation
+- **Database Ready for Tasks:**
+    - Users table created with proper relationships
+    - Tasks table has user_id foreign key
+    - Indexes on user_id for performance
+- **API Structure for Phase 3:**
+    - Authentication middleware ready
+    - User context available in all requests
+    - Protected route pattern established
+- **Frontend Structure for Phase 3:**
+    - User authentication state managed
+    - Protected routes implemented
+    - API client with auth integration
+    - Error handling for auth-related issues
