@@ -37,6 +37,46 @@
 
 **Acceptance Criteria:** 21 SMART criteria across Frontend, Backend, Development, and Design System aspects, ensuring a robust foundation.
 
+## Phase 2: User Authentication Setup
+
+**Overview:**
+This phase implements user authentication using NextAuth.js on the frontend and JWT-based verification on the FastAPI backend. Users can sign up, log in, and access protected resources.
+
+**Frontend Setup (Next.js):**
+1.  **Install Dependencies:**
+    ```bash
+    cd frontend
+    npm install next-auth jose jwt-decode
+    ```
+2.  **Environment Variables (`frontend/.env.local`):**
+    Create or update `frontend/.env.local` with the following:
+    ```
+    NEXTAUTH_SECRET="your_nextauth_secret_key_here" # Generate a strong secret
+    NEXTAUTH_URL="http://localhost:3000" # Your frontend URL
+    NEXT_PUBLIC_API_URL="http://localhost:8000" # Your backend API URL
+    ```
+    *   **NEXTAUTH_SECRET**: A random string used to hash tokens, sign cookies, and generate cryptographic keys. You can generate one using `openssl rand -base64 32` or similar.
+    *   **NEXTAUTH_URL**: The canonical URL of your frontend application.
+3.  **NextAuth.js Configuration:**
+    Ensure `frontend/lib/auth.ts`, `frontend/app/api/auth/[...nextauth]/route.ts`, `frontend/providers/AuthProvider.tsx`, and `frontend/app/layout.tsx` are configured as per the implementation.
+
+**Backend Setup (FastAPI):**
+1.  **Environment Variables (`backend/.env`):**
+    Ensure `backend/.env` contains the following JWT-related secrets:
+    ```
+    JWT_SECRET_KEY=your-32-character-secret-key-here # Generate a strong secret
+    JWT_ALGORITHM=HS256
+    ACCESS_TOKEN_EXPIRE_MINUTES=1440 # 24 hours
+    REFRESH_TOKEN_EXPIRE_DAYS=7
+    ```
+    *   **JWT_SECRET_KEY**: A strong secret key used for signing JWT tokens.
+    *   **JWT_ALGORITHM**: The algorithm used for JWT signing (e.g., HS256).
+    *   **ACCESS_TOKEN_EXPIRE_MINUTES**: Expiration time for access tokens in minutes.
+    *   **REFRESH_TOKEN_EXPIRE_DAYS**: Expiration time for refresh tokens in days (if implemented).
+
+**Database Setup:**
+The database will automatically create `users` table and update `tasks` table with `user_id` foreign key on FastAPI application startup. Ensure your PostgreSQL instance (e.g., Neon) is running and configured correctly in `backend/.env`'s `DATABASE_URL`.
+
 ## Getting Started
 
 More detailed setup instructions can be found in `docs/setup.md`.

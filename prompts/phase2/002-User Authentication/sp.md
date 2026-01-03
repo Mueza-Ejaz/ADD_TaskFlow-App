@@ -1,0 +1,263 @@
+# Phase 2: User Authentication Specification Creation
+
+## CONTEXT:
+We have successfully completed Phase 1 of ADD_TaskFlow-App with:
+- Monorepo structure established
+- Next.js 16 frontend running at localhost:3000
+- FastAPI backend running at localhost:8000
+- Design system with 6 UI components
+- Database connection to Neon PostgreSQL
+- Environment variables configured
+
+Now we are ready for Phase 2: User Authentication.
+
+## YOUR TASK:
+Create a comprehensive specification for Phase 2: User Authentication. This phase will implement complete authentication system including:
+1. User registration (signup)
+2. User login (signin)
+3. JWT token-based authentication
+4. Protected routes
+5. User context management
+6. Better Auth integration
+
+## SPECIFICATION FILE LOCATION:
+Create file at: `specs/P2-02 User Authentication/spec.md`
+
+## SPECIFICATION CONTENT REQUIREMENTS:
+
+### 1. Overview
+- Phase goal: Implement secure user authentication system
+- Success definition: Users can signup, login, and access protected content
+- Relationship to Phase 1: Builds upon existing foundation
+- Relationship to Phase 3: Enables user-specific task management
+
+### 2. Scope
+#### In-Scope:
+- User registration with email/password
+- User login with email/password
+- JWT token generation and validation
+- Protected API endpoints
+- Protected frontend routes
+- User context/provider
+- Logout functionality
+- Basic user profile (email, name)
+- Password security (hashing, validation)
+
+#### Out-of-Scope:
+- Social login (Google, GitHub)
+- Email verification
+- Password reset
+- Two-factor authentication
+- User roles/permissions
+- Advanced profile management
+
+### 3. Technical Requirements
+
+#### 3.1 Frontend Authentication (Next.js + Better Auth)
+- Better Auth setup and configuration
+- Signup page with form validation
+- Login page with form validation
+- Protected route middleware
+- User context/provider using React Context
+- API client with automatic JWT token attachment
+- Logout functionality clearing tokens
+- Protected dashboard page
+
+#### 3.2 Backend Authentication (FastAPI)
+- User model extending SQLModel
+- Password hashing using bcrypt
+- JWT token generation and validation
+- Authentication middleware for protected routes
+- Signup endpoint: `POST /api/v1/auth/signup`
+- Login endpoint: `POST /api/v1/auth/login`
+- Logout endpoint: `POST /api/v1/auth/logout`
+- Current user endpoint: `GET /api/v1/auth/me`
+- Protected route examples
+
+#### 3.3 Database Schema Updates
+- Users table with columns:
+  - id (primary key)
+  - email (unique, indexed)
+  - hashed_password
+  - name
+  - created_at
+  - updated_at
+- Relationship to tasks table (foreign key: user_id)
+
+### 4. User Stories
+1. **As a new user**, I want to sign up with my email and password so I can create an account.
+2. **As a registered user**, I want to log in with my credentials so I can access my tasks.
+3. **As a logged-in user**, I want to see my dashboard with protected content.
+4. **As a user**, I want my login state to persist across page refreshes.
+5. **As a user**, I want to log out securely so my session ends.
+6. **As a developer**, I want protected API endpoints that require authentication.
+7. **As a security-conscious user**, I want my password securely hashed.
+
+### 5. Acceptance Criteria (SMART)
+
+#### Frontend Criteria:
+1. ✅ **Signup Page**: Form with email, password, name fields; validation; redirects to dashboard on success.
+2. ✅ **Login Page**: Form with email, password; validation; redirects to dashboard on success.
+3. ✅ **Protected Routes**: Unauthenticated users redirected to login when accessing `/dashboard`.
+4. ✅ **User Context**: User data available throughout app via React Context.
+5. ✅ **Logout**: Button clears tokens and redirects to login page.
+6. ✅ **Token Management**: JWT tokens stored securely (httpOnly cookies preferred).
+
+#### Backend Criteria:
+1. ✅ **Signup Endpoint**: `POST /api/v1/auth/signup` creates user, returns JWT tokens.
+2. ✅ **Login Endpoint**: `POST /api/v1/auth/login` validates credentials, returns JWT tokens.
+3. ✅ **Protected Middleware**: All `/api/v1/tasks/*` endpoints require valid JWT.
+4. ✅ **Password Security**: Passwords hashed with bcrypt (12 rounds minimum).
+5. ✅ **User Endpoint**: `GET /api/v1/auth/me` returns current user data.
+6. ✅ **Error Handling**: Clear error messages for invalid credentials, duplicate email.
+
+#### Integration Criteria:
+1. ✅ **End-to-End Flow**: User can signup → login → access protected dashboard → logout.
+2. ✅ **Token Refresh**: Frontend automatically attaches token to API requests.
+3. ✅ **Session Persistence**: Login state persists across page reloads.
+4. ✅ **CORS Configuration**: Frontend-backend authentication works without CORS issues.
+
+### 6. Security Requirements
+- JWT tokens with 24-hour expiry for access, 7 days for refresh
+- HTTP-only cookies for token storage (more secure than localStorage)
+- Password strength validation (min 8 chars, uppercase, lowercase, number)
+- Rate limiting on auth endpoints (prevent brute force)
+- Input validation on both frontend and backend
+- SQL injection prevention via SQLModel
+- Environment variables for all secrets
+
+### 7. Design System Updates
+- New authentication-specific components:
+  - `AuthForm.tsx` - reusable form for auth pages
+  - `ProtectedRoute.tsx` - wrapper for protected pages
+  - `AuthProvider.tsx` - user context provider
+- Authentication page layouts
+- Loading states during auth operations
+- Error display components for auth errors
+
+### 8. Testing Requirements
+#### Frontend Tests:
+- Auth form validation tests
+- Protected route tests
+- User context tests
+- Integration tests for signup/login flow
+
+#### Backend Tests:
+- User model tests
+- Password hashing tests
+- JWT token tests
+- API endpoint tests (signup, login, protected)
+
+### 9. API Endpoint Specifications
+
+#### Signup:
+POST /api/v1/auth/signup
+Content-Type: application/json
+
+Request:
+{
+"email": "user@example.com",
+"password": "SecurePass123",
+"name": "John Doe"
+}
+
+Response (201):
+{
+"user": {
+"id": 1,
+"email": "user@example.com",
+"name": "John Doe"
+},
+"tokens": {
+"access_token": "jwt_token_here",
+"refresh_token": "refresh_token_here"
+}}
+
+
+#### Login:
+POST /api/v1/auth/login
+Content-Type: application/json
+
+Request:
+{
+"email": "user@example.com",
+"password": "SecurePass123"
+}
+
+Response (200):
+{
+"user": {
+"id": 1,
+"email": "user@example.com",
+"name": "John Doe"
+},
+"tokens": {
+"access_token": "jwt_token_here",
+"refresh_token": "refresh_token_here"
+}}
+
+
+#### Get Current User:
+GET /api/v1/auth/me
+Authorization: Bearer {access_token}
+
+Response (200):
+{
+"id": 1,
+"email": "user@example.com",
+"name": "John Doe",
+"created_at": "2024-01-01T00:00:00Z"
+}
+
+
+### 10. Database Schema
+```sql
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add foreign key constraint to tasks table
+ALTER TABLE tasks ADD COLUMN user_id INTEGER REFERENCES users(id);
+
+11. Timeline
+Estimated Duration: 4-6 days development time
+Day 1: Backend user model and authentication endpoints
+Day 2: Frontend Better Auth setup and signup/login pages
+Day 3: Protected routes and middleware
+Day 4: Integration testing and error handling
+Day 5: Security hardening and documentation
+Day 6: Final validation and Phase 3 preparation
+
+12. Deliverables
+- Complete user authentication system
+- Signup and login pages
+- Protected dashboard page
+- JWT token-based API security
+- User context/provider
+- Updated database schema
+- Comprehensive tests
+- API documentation
+
+13. Success Metrics
+- Security: No passwords stored in plain text; JWT tokens validated
+- Usability: Users can complete auth flow in under 30 seconds
+- Reliability: 99.9% auth endpoint uptime in local development
+- Performance: Login response < 200ms
+- Code Quality: 80%+ test coverage for auth components
+
+14. Risk Mitigation:
+
+      Risk	                                   Mitigation
+Token security issues	         Use HTTP-only cookies, short expiry times
+Password brute force	         Rate limiting on auth endpoints
+Database connection failures	 Connection pooling, retry logic
+Frontend-backend token sync	     Centralized token management in API client
+CORS issues during auth	         Test thoroughly, configure allowed origins
+
+Now create this specification file at specs/00-2 User Authentication/spec.md with the exact content provided above.
+
