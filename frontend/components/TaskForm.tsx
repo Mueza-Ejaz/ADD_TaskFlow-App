@@ -41,26 +41,49 @@ export function TaskForm({ onSubmit, defaultValues }: TaskFormProps) {
     <form onSubmit={handleSubmit((data) => { console.log('Form submitted with data:', data); onSubmit(data); })} className="space-y-4" role="form">
       <div>
         <Label htmlFor="title">Title</Label>
-        <Input id="title" {...register("title")} />
-        {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+        <Input 
+          id="title" 
+          {...register("title")} 
+          aria-required="true"
+          aria-invalid={errors.title ? "true" : "false"}
+          aria-describedby="title-error"
+        />
+        {errors.title && <p id="title-error" className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
 
       <div>
         <Label htmlFor="description">Description</Label>
-        <Input id="description" {...register("description")} />
-        {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+        <Input 
+          id="description" 
+          {...register("description")} 
+          aria-invalid={errors.description ? "true" : "false"}
+          aria-describedby="description-error"
+        />
+        {errors.description && <p id="description-error" className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>
 
       <div>
         <Label htmlFor="priority">Priority (1-5)</Label>
-        <Input id="priority" type="number" {...register("priority")} />
-        {errors.priority && <p className="text-red-500 text-sm">{errors.priority.message}</p>}
+        <Input 
+          id="priority" 
+          type="number" 
+          {...register("priority")} 
+          aria-invalid={errors.priority ? "true" : "false"}
+          aria-describedby="priority-error"
+        />
+        {errors.priority && <p id="priority-error" className="text-red-500 text-sm">{errors.priority.message}</p>}
       </div>
 
       <div>
         <Label htmlFor="due_date">Due Date</Label>
-        <Input id="due_date" type="datetime-local" {...register("due_date")} />
-        {errors.due_date && <p className="text-red-500 text-sm">{errors.due_date.message}</p>}
+        <Input 
+          id="due_date" 
+          type="datetime-local" 
+          {...register("due_date")} 
+          aria-invalid={errors.due_date ? "true" : "false"}
+          aria-describedby="due_date-error"
+        />
+        {errors.due_date && <p id="due_date-error" className="text-red-500 text-sm">{errors.due_date.message}</p>}
       </div>
 
       <Button type="submit">Submit</Button>

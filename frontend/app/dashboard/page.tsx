@@ -2,15 +2,34 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Import Suspense
+import dynamic from "next/dynamic"; // Import dynamic
+
 import { Button } from "@/components/ui/Button";
-import { Modal } from "@/components/ui/Modal";
-import { ConfirmationModal } from "@/components/ui/ConfirmationModal"; // Import ConfirmationModal
-import { TaskForm } from "@/components/TaskForm";
-import { useCreateTask, useTasks, useUpdateTask, useDeleteTask } from "@/hooks/useTasks"; // Import useDeleteTask
-import { TaskKanban } from "@/components/TaskKanban";
-import { EmptyState } from "@/components/EmptyState"; // Import EmptyState
-import { TaskRead } from "@/hooks/useTasks"; // Import TaskRead from useTasks
+// Dynamically import components
+const DynamicModal = dynamic(() => import("@/components/ui/Modal").then((mod) => mod.Modal), {
+  loading: () => <p>Loading modal...</p>,
+  ssr: false,
+});
+const DynamicConfirmationModal = dynamic(() => import("@/components/ui/ConfirmationModal").then((mod) => mod.ConfirmationModal), {
+  loading: () => <p>Loading confirmation...</p>,
+  ssr: false,
+});
+const DynamicTaskForm = dynamic(() => import("@/components/TaskForm").then((mod) => mod.TaskForm), {
+  loading: () => <p>Loading form...</p>,
+  ssr: false,
+});
+const DynamicTaskKanban = dynamic(() => import("@/components/TaskKanban").then((mod) => mod.TaskKanban), {
+  loading: () => <p>Loading tasks...</p>,
+  ssr: false,
+});
+const DynamicEmptyState = dynamic(() => import("@/components/EmptyState").then((mod) => mod.EmptyState), {
+  loading: () => <p>Loading empty state...</p>,
+  ssr: false,
+});
+
+import { useCreateTask, useTasks, useUpdateTask, useDeleteTask } from "@/hooks/useTasks";
+import { TaskRead } from "@/lib/api"; // Import TaskRead from api.ts
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -114,29 +133,37 @@ export default function DashboardPage() {
               <p className="text-lg text-red-500">Error loading tasks.</p>
             </div>
           ) : tasks && tasks.length > 0 ? (
-            <TaskKanban tasks={tasks} onEditTask={openEditModal} onDeleteTask={openConfirmDeleteModal} /> {/* Pass onDeleteTask */}
+            <Suspense fallback={<p>Loading Kanban...</p>}>
+              <DynamicTaskKanban tasks={tasks} onEditTask={openEditModal} onDeleteTask={openConfirmDeleteModal} /> {/* Pass onDeleteTask */}
+            </Suspense>
           ) : (
-            <EmptyState />
+            <Suspense fallback={<p>Loading empty state...</p>}>
+              <DynamicEmptyState />
+            </Suspense>
           )}
         </section>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={editingTask ? "Edit Task" : "Create New Task"}>
-        <TaskForm 
-          onSubmit={editingTask ? handleUpdateTask : handleCreateTask} 
-          defaultValues={editingTask || undefined} // Pass defaultValues for editing
-        />
-      </Modal>
+      <Suspense fallback={<p>Loading task modal...</p>}>
+        <DynamicModal isOpen={isModalOpen} onClose={closeModal} title={editingTask ? "Edit Task" : "Create New Task"}>
+          <DynamicTaskForm 
+            onSubmit={editingTask ? handleUpdateTask : handleCreateTask} 
+            defaultValues={editingTask || undefined} // Pass defaultValues for editing
+          />
+        </DynamicModal>
+      </Suspense>
 
-      <ConfirmationModal
-        isOpen={showConfirmDeleteModal}
-        onCancel={closeConfirmDeleteModal}
-        onConfirm={handleDeleteTask}
-        title="Confirm Delete"
-        message="Are you sure you want to delete this task? This action cannot be undone."
-        confirmText="Delete"
-        isConfirming={deleteTaskMutation.isPending}
-      />
+      <Suspense fallback={<p>Loading confirmation modal...</p>}>
+        <DynamicConfirmationModal
+          isOpen={showConfirmDeleteModal}
+          onCancel={closeConfirmDeleteModal}
+          onConfirm={handleDeleteTask}
+          title="Confirm Delete"
+          message="Are you sure you want to delete this task? This action cannot be undone."
+          confirmText="Delete"
+          isConfirming={deleteTaskMutation.isPending}
+        />
+      </Suspense>
     </div>
   );
 }

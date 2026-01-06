@@ -180,9 +180,9 @@
 
 ### Implementation for User Story 5
 
--   [ ] T051 [P] [US5] Create `ConfirmationModal` UI component in `frontend/components/ui/ConfirmationModal.tsx`.
--   [ ] T052 [US5] Implement `DELETE /api/v1/tasks/{task_id}` endpoint in `backend/src/api/v1/endpoints/tasks.py` to delete tasks.
--   [ ] T053 [US5] Add React Query mutation for deleting tasks with optimistic updates and confirmation in `frontend/hooks/useTasks.ts` and `frontend/app/dashboard/page.tsx`.
+-   [x] T051 [P] [US5] Create `ConfirmationModal` UI component in `frontend/components/ui/ConfirmationModal.tsx`.
+-   [x] T052 [US5] Implement `DELETE /api/v1/tasks/{task_id}` endpoint in `backend/src/api/v1/endpoints/tasks.py` to delete tasks.
+-   [x] T053 [US5] Add React Query mutation for deleting tasks with optimistic updates and confirmation in `frontend/hooks/useTasks.ts` and `frontend/app/dashboard/page.tsx`.
 
 **Checkpoint**: All P1 and P2 user stories are complete and independently functional
 
@@ -192,10 +192,10 @@
 
 **Purpose**: Improvements that affect multiple user stories and overall application quality. This aligns with Phase 3E: Polish & Testing from `plan.md`.
 
--   [ ] T054 [P] Refine animations and transitions for task operations (create, update, delete, status change) and UI elements (modals, drag & drop) in `frontend/lib/animations.ts`, `frontend/styles/globals.css`.
--   [ ] T055 [P] Implement comprehensive error handling and user feedback (e.g., `Toast` component for API errors) in `frontend/components/ui/Toast.tsx`, `frontend/lib/api.ts`.
--   [ ] T056 Ensure full accessibility (WCAG 2.1 AA compliance, keyboard navigation, screen reader labels, focus management, color contrast ratio) across all new frontend components.
--   [ ] T057 Conduct a full performance review and optimize frontend bundle size, code splitting, and API call efficiency.
+-   [x] T054 [P] Refine animations and transitions for task operations (create, update, delete, status change) and UI elements (modals, drag & drop) in `frontend/lib/animations.ts`, `frontend/styles/globals.css`.
+-   [x] T055 [P] Implement comprehensive error handling and user feedback (e.g., `Toast` component for API errors) in `frontend/components/ui/Toast.tsx`, `frontend/lib/api.ts`.
+-   [x] T056 Ensure full accessibility (WCAG 2.1 AA compliance, keyboard navigation, screen reader labels, focus management, color contrast ratio) across all new frontend components.
+-   [x] T057 Conduct a full performance review and optimize frontend bundle size, code splitting, and API call efficiency.
 -   [ ] T058 Expand backend test coverage to 90%+ and frontend test coverage to 80%+.
 -   [ ] T059 Document new API endpoints in `docs/api/tasks.md`.
 

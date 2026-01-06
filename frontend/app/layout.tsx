@@ -1,4 +1,5 @@
 import AuthProvider from '@/providers/AuthProvider';
+import { ToastProvider } from '@/providers/ToastProvider'; // Import ToastProvider
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          {children}
+          <ToastProvider> {/* Wrap children with ToastProvider */}
+            {children}
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>
