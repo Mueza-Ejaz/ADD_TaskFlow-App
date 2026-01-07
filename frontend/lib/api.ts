@@ -4,7 +4,7 @@ import { TaskFormSchema } from '@/components/TaskForm';
 
 type TaskCreate = z.infer<typeof TaskFormSchema>;
 
-interface TaskRead {
+export interface TaskRead {
   id: number;
   title: string;
   description?: string;
@@ -48,6 +48,69 @@ async function handleApiResponse<T>(response: Response): Promise<T> {
   }
   return response.json();
 }
+
+// Generic API client
+const api = {
+  get: async <T>(endpoint: string, accessToken?: string): Promise<T> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+      },
+    });
+    return handleApiResponse<T>(response);
+  },
+
+  post: async <T>(endpoint: string, data: any, accessToken?: string): Promise<T> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+      },
+      body: JSON.stringify(data),
+    });
+    return handleApiResponse<T>(response);
+  },
+
+  put: async <T>(endpoint: string, data: any, accessToken?: string): Promise<T> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+      },
+      body: JSON.stringify(data),
+    });
+    return handleApiResponse<T>(response);
+  },
+
+  patch: async <T>(endpoint: string, data: any, accessToken?: string): Promise<T> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+      },
+      body: JSON.stringify(data),
+    });
+    return handleApiResponse<T>(response);
+  },
+
+  delete: async <T>(endpoint: string, accessToken?: string): Promise<T> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken && { 'Authorization': `Bearer ${accessToken}` }),
+      },
+    });
+    return handleApiResponse<T>(response);
+  }
+};
+
+export { api };
 
 // API call function for fetching tasks with filters
 export const getTasksApi = async (accessToken: string | undefined, filters: TaskFilters): Promise<TaskRead[]> => {

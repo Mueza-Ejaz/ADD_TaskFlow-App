@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        const res = await fetch("http://localhost:8000/api/v1/auth/login", {
+        const res = await fetch("http://localhost:8001/api/v1/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: credentials?.email, password: credentials?.password })
@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         const data = await res.json();
         // Backend returns { access_token: "...", token_type: "bearer" }
         // We need to get user info separately using the token
-        const userRes = await fetch("http://localhost:8000/api/v1/auth/me", {
+        const userRes = await fetch("http://localhost:8001/api/v1/auth/me", {
           headers: {
             "Authorization": `Bearer ${data.access_token}`,
             "Content-Type": "application/json"

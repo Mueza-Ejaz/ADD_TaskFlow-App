@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-import { Button } from './ui/button'; // Assuming shadcn-ui button
-import { Input } from './ui/input';   // Assuming shadcn-ui input
+import { Button } from './ui/Button'; // Assuming shadcn-ui button
+import { Input } from './ui/Input';   // Assuming shadcn-ui input
 import { Label } from './ui/label';   // Assuming shadcn-ui label
 
 // Define the Zod schema for the task form

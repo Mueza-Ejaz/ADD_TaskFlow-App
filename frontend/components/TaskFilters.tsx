@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/Button';
-import { Input } from './ui/input';
+import { Input } from './ui/Input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { ArrowDownUp } from 'lucide-react'; // Assuming lucide-react is available for icons

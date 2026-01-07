@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'; // Assuming shadcn-ui card components
+import { Card } from './ui/Card'; // Simple Card component
 import { Button } from './ui/Button'; // Import Button component
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -73,31 +73,31 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {...listeners}
         className="mb-3 cursor-grab"
       >
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
+        <div className="pb-4 border-b border-gray-200 mb-4">
+          <h3 className="font-semibold text-lg mb-1">{title}</h3>
+          <p className="text-gray-600 text-sm">{description}</p>
+        </div>
+        <div className="pt-4">
           <p><strong>Status:</strong> {status}</p>
           {priority && <p><strong>Priority:</strong> {priority}</p>}
           {formattedDueDate && <p><strong>Due Date:</strong> {formattedDueDate}</p>}
           <div className="flex space-x-2 mt-2">
-            <Button 
-              onClick={() => onEditTask({ id, title, description, priority, due_date, status, user_id, created_at, updated_at })} 
+            <Button
+              onClick={() => onEditTask({ id, title, description, priority, due_date, status, user_id, created_at, updated_at })}
               className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm"
               aria-label={`Edit task: ${title}`}
             >
               Edit
             </Button>
-            <Button 
-              onClick={() => onDeleteTask(id)} 
+            <Button
+              onClick={() => onDeleteTask(id)}
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
               aria-label={`Delete task: ${title}`}
             >
               Delete
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </motion.div>
   );
