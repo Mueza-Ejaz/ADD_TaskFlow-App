@@ -50,10 +50,16 @@ const Toast: React.FC<ToastProps> = ({
             bgColor[type],
             className
           )}
+          role="status" // Indicate to screen readers that this is a status update
+          aria-live="polite" // Announce changes, but not interruptive
         >
           <div className="flex items-center justify-between">
             <span>{message}</span>
-            <button className="ml-4 text-white font-semibold" onClick={() => setIsVisible(false)}>
+            <button 
+              className="ml-4 text-white font-semibold" 
+              onClick={() => setIsVisible(false)}
+              aria-label="Dismiss notification" // Label for screen readers
+            >
               ×
             </button>
           </div>
