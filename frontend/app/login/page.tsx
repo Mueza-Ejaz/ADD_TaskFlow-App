@@ -3,12 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
-import BackgroundGlow from '../../components/BackgroundGlow';
+import Link from 'next/link';
+import { Mail, Lock, ArrowLeft, CheckCircle2 } from "lucide-react";
+import ParticleBackground from '@/components/ParticleBackground';
 import { useToast } from '@/providers/ToastProvider';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { showToast } = useToast();
   
   const [email, setEmail] = useState('');
@@ -46,71 +48,80 @@ export default function LoginPage() {
   };
 
   if (status === 'loading' || status === 'authenticated') {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center overflow-hidden">
-      <BackgroundGlow />
-      
-      <div className="relative z-10 w-[90%] max-w-md rounded-2xl border border-white/20 bg-white/10 px-10 py-10 shadow-2xl backdrop-blur-xl">
-        <h1 className="mb-8 text-center text-3xl font-bold tracking-wide text-white">Login</h1>
-        
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div>
-            <label htmlFor="email" className="sr-only">Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-11 w-full rounded-md border border-white/20 bg-black/40 px-4 text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all"
-              required
-              disabled={isLoading}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="password" className="sr-only">Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-11 w-full rounded-md border border-white/20 bg-black/40 px-4 text-white placeholder-gray-400 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all"
-              required
-              disabled={isLoading}
-            />
+    <div className="min-h-screen bg-black relative overflow-hidden flex items-center justify-center">
+      <ParticleBackground />
+
+      <div className="relative z-10 w-full flex flex-col items-center px-6 animate-fadeInUp">
+        <div className="w-full max-w-[480px] mb-8">
+          <Link href="/" className="back-btn">
+            <ArrowLeft size={20} /> Back to Home
+          </Link>
+        </div>
+
+        <div className="auth-card">
+          <div className="text-center mb-8">
+            <CheckCircle2 className="mx-auto text-[#00FFD1] mb-3" size={48} />
+            <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`mt-2 h-11 w-full rounded-md bg-emerald-400 font-semibold text-black transition-all duration-200 ease-in-out hover:bg-emerald-300 hover:shadow-lg flex items-center justify-center ${
-              isLoading ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
-          >
-            {isLoading ? (
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
-            ) : (
-              'Login'
-            )}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="auth-label">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  className="auth-input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
 
-        <div className="mt-8 text-center text-sm text-gray-400">
-          Don't have an account?{' '}
-          <button 
-            onClick={() => router.push('/signup')}
-            className="font-medium text-emerald-400 hover:text-emerald-300 hover:underline transition-all"
-            disabled={isLoading}
-          >
-            Sign up
-          </button>
+            <div className="space-y-2">
+              <label className="auth-label">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  className="auth-input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="auth-btn"
+            >
+              {isLoading ? (
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent" />
+              ) : (
+                "Sign In"
+              )}
+            </button>
+
+            <p className="text-center auth-footer-text pt-4">
+              No account?{" "}
+              <Link href="/signup" className="auth-link">
+                Sign up
+              </Link>
+            </p>
+          </form>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

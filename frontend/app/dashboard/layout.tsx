@@ -2,7 +2,7 @@
 
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
-import { AnimatedBackground } from '@/components/ui/AnimatedBackground';
+import ParticleBackground from '@/components/ParticleBackground';
 
 export default function DashboardLayout({
   children,
@@ -11,7 +11,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="relative min-h-screen w-full bg-black text-white">
-      <AnimatedBackground />
+      <ParticleBackground />
       <Sidebar />
       <div className="pl-64">
         <div className="container mx-auto min-h-screen p-8">

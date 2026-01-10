@@ -21,10 +21,10 @@ export const Sidebar = () => {
       <div className="flex h-full flex-col px-4 py-8">
         {/* Logo */}
         <div className="mb-10 flex items-center justify-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-emerald-400 bg-emerald-400/10">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-[#00FFD1] bg-[#00FFD1]/10">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 text-emerald-400" 
+              className="h-6 w-6 text-[#00FFD1]" 
               fill="none" 
               viewBox="0 0 24 24" 
               stroke="currentColor"
@@ -47,11 +47,11 @@ export const Sidebar = () => {
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-emerald-500/10 text-emerald-400 shadow-lg shadow-emerald-500/5"
+                    ? "bg-[#00FFD1]/10 text-[#00FFD1] shadow-lg shadow-[#00FFD1]/5"
                     : "text-gray-400 hover:bg-white/5 hover:text-white"
                 )}
               >
-                <item.icon className={cn("h-5 w-5", isActive ? "text-emerald-400" : "text-gray-500 group-hover:text-white")} />
+                <item.icon className={cn("h-5 w-5", isActive ? "text-[#00FFD1]" : "text-gray-500 group-hover:text-white")} />
                 {item.label}
               </Link>
             );
