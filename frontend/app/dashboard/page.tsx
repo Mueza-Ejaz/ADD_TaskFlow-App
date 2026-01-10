@@ -1,27 +1,30 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, Suspense } from "react";
 import dynamic from "next/dynamic";
+import { Plus, CheckCircle2 } from "lucide-react";
 
 // Dynamically import components
 const DynamicModal = dynamic(() => import("@/components/ui/Modal").then((mod) => mod.Modal), {
-  loading: () => <p className="hidden">Loading modal...</p>,
+  loading: () => <p className="hidden">Loading...</p>,
   ssr: false,
 });
 const DynamicConfirmationModal = dynamic(() => import("@/components/ui/ConfirmationModal").then((mod) => mod.ConfirmationModal), {
-  loading: () => <p className="hidden">Loading confirmation...</p>,
+  loading: () => <p className="hidden">Loading...</p>,
   ssr: false,
 });
 const DynamicTaskForm = dynamic(() => import("@/components/TaskForm").then((mod) => mod.TaskForm), {
-  loading: () => <p className="hidden">Loading form...</p>,
+  loading: () => <p className="hidden">Loading...</p>,
   ssr: false,
 });
 
+import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { TaskKanban } from "@/components/TaskKanban";
+import { TaskFilters as TaskFiltersComponent } from "@/components/TaskFilters";
 import { Button } from "@/components/ui/Button";
-import { TaskRead } from "@/lib/api";
-
+import { TaskRead, TaskFilters } from "@/lib/api";
 import { useCreateTask, useTasks, useUpdateTask, useDeleteTask } from "@/hooks/useTasks";
 
 export default function DashboardPage() {
@@ -32,10 +35,22 @@ export default function DashboardPage() {
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [taskIdToDelete, setTaskIdToDelete] = useState<number | null>(null);
 
-  const { data: tasks, isLoading, isError } = useTasks();
+  const [filters, setFilters] = useState<TaskFilters>({
+    priority: "",
+    status: "",
+    search: "",
+    sortBy: "",
+    sortOrder: "asc",
+  });
+
+  const { data: tasks, isLoading, isError } = useTasks(filters);
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
   const deleteTaskMutation = useDeleteTask();
+
+  const handleFilterChange = (newFilters: Partial<TaskFilters>) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  };
 
   const handleCreateTask = async (values: any) => {
     await createTaskMutation.mutateAsync(values);
@@ -80,8 +95,8 @@ export default function DashboardPage() {
 
   if (status === "loading") {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <p className="text-lg text-gray-700">Loading dashboard...</p>
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#00FFD1] border-t-transparent shadow-[0_0_15px_rgba(0,255,209,0.2)]" />
       </div>
     );
   }
@@ -92,114 +107,72 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
-      <header className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome, {session.user?.name || session.user?.email}!</h1>
-        <div className="flex space-x-4">
-          <Button
-            onClick={() => {
-              console.log("Create New Task button clicked");
-              setEditingTask(null);
-              setIsModalOpen(true);
-              console.log("Modal state after update:", { isModalOpen: true, editingTask: null });
-            }}
-            variant="primary"
-          >
-            Create New Task
-          </Button>
-          <Button onClick={() => signOut({ callbackUrl: "/login" })} className="bg-red-600 hover:bg-red-700 text-white">
-            Log Out
-          </Button>
+    <>
+      <div className="mb-10 flex items-center justify-between">
+        <div className="flex items-start gap-4">
+          <div className="p-3 bg-[#00FFD1]/10 rounded-2xl border border-[#00FFD1]/20 shadow-[0_0_15px_rgba(0,255,209,0.1)] hidden sm:block">
+            <CheckCircle2 className="text-[#00FFD1] w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold text-white tracking-tight">Task Board</h2>
+            <p className="text-sm text-white/50 font-medium">Manage and organize your projects efficiently</p>
+          </div>
         </div>
-      </header>
+        <Button
+          onClick={() => {
+            setEditingTask(null);
+            setIsModalOpen(true);
+          }}
+          variant="primary"
+          className="hidden sm:flex gap-2 h-12 px-6 rounded-xl bg-[#00FFD1] text-black font-bold hover:shadow-[0_0_20px_rgba(0,255,209,0.4)] transition-all hover:scale-[1.05] active:scale-[0.98]"
+        >
+          <Plus className="h-5 w-5" />
+          Create Task
+        </Button>
+      </div>
 
-      <main className="max-w-7xl mx-auto">
-        {/* Placeholder for new CRUD UI */}
-        <section className="bg-white rounded-lg shadow-md p-4">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Task Management</h2>
-          {isLoading ? (
-            <div className="flex justify-center items-center min-h-96">
-              <p className="text-lg text-gray-700">Loading tasks...</p>
-            </div>
-          ) : isError ? (
-            <div className="flex flex-col items-center justify-center min-h-96">
-              <p className="text-lg text-red-500 mb-4">Error loading tasks.</p>
-              <Button
-                onClick={() => window.location.reload()}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Retry
-              </Button>
-            </div>
-          ) : (
-            tasks && tasks.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Title
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Description
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Priority
-                      </th>
-                      <th scope="col" className="relative px-6 py-3">
-                        <span className="sr-only">Actions</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {tasks.map((task) => (
-                      <tr key={task.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{task.title}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{task.description || 'N/A'}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            {task.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {task.priority}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Button onClick={() => openEditModal(task)} variant="secondary" className="mr-2">
-                            Edit
-                          </Button>
-                          <Button onClick={() => openConfirmDeleteModal(task.id)} variant="destructive">
-                            Delete
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center min-h-96">
-                <p className="text-lg text-gray-700 mb-4">No tasks found. Create one to get started!</p>
-                <Button onClick={() => { setEditingTask(null); setIsModalOpen(true); }} variant="primary">
-                  Create New Task
-                </Button>
-              </div>
-            )
-          )}
-        </section>
-      </main>
+      <div className="mb-8">
+        <TaskFiltersComponent 
+          currentFilters={filters as any} 
+          onFilterChange={handleFilterChange} 
+        />
+      </div>
 
-      <DynamicModal isOpen={isModalOpen} onClose={closeModal} title={editingTask ? "Edit Task" : "Create New Task"} className="z-[9999]">
+      <div className="h-[calc(100vh-23rem)]">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-full">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#00FFD1] border-t-transparent shadow-[0_0_15px_rgba(0,255,209,0.2)]" />
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center h-full text-center glass-card">
+            <p className="text-red-400 mb-4 font-medium">Error loading tasks. Please check your connection.</p>
+            <Button onClick={() => window.location.reload()} variant="secondary" className="border-white/20 hover:border-white/40">
+              Retry Connection
+            </Button>
+          </div>
+        ) : (
+          <TaskKanban
+            initialTasks={tasks || []}
+            onEditTask={openEditModal}
+            onDeleteTask={openConfirmDeleteModal}
+          />
+        )}
+      </div>
+
+      <FloatingActionButton 
+        onClick={() => {
+          setEditingTask(null);
+          setIsModalOpen(true);
+        }}
+        className="sm:hidden bg-[#00FFD1] text-black shadow-[0_0_20px_rgba(0,255,209,0.3)]"
+      />
+
+      <DynamicModal isOpen={isModalOpen} onClose={closeModal} title={editingTask ? "Edit Task" : "Create New Task"}>
         <DynamicTaskForm
           onSubmit={editingTask ? handleUpdateTask : handleCreateTask}
+          onCancel={closeModal}
           defaultValues={editingTask || undefined}
+          isSubmitting={editingTask ? updateTaskMutation.isPending : createTaskMutation.isPending}
         />
       </DynamicModal>
 
@@ -208,14 +181,12 @@ export default function DashboardPage() {
           isOpen={showConfirmDeleteModal}
           onCancel={closeConfirmDeleteModal}
           onConfirm={handleDeleteTask}
-          title="Confirm Delete"
+          title="Delete Task"
           message="Are you sure you want to delete this task? This action cannot be undone."
           confirmText="Delete"
           isConfirming={deleteTaskMutation.isPending}
         />
       </Suspense>
-    </div>
+    </>
   );
 }
-
-

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
-import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ArrowDownUp } from 'lucide-react'; // Assuming lucide-react is available for icons
+import { ArrowDownUp, Search, SlidersHorizontal } from 'lucide-react';
 
 interface TaskFiltersProps {
   currentFilters: {
@@ -44,78 +43,76 @@ export const TaskFilters: React.FC<TaskFiltersProps> = ({ currentFilters, onFilt
   };
 
   return (
-    <div className="flex flex-wrap items-end gap-4 p-4 bg-white rounded-lg shadow-md">
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md shadow-lg transition-all duration-300 hover:border-white/20">
+      <div className="flex items-center gap-2 text-white/40 mr-2 border-r border-white/10 pr-4 hidden md:flex">
+        <SlidersHorizontal size={18} />
+        <span className="text-sm font-medium">Filters</span>
+      </div>
+
       {/* Search Input */}
-      <div className="flex-grow">
-        <Label htmlFor="search">Search</Label>
+      <div className="min-w-[200px] flex-1 relative group">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 transition-colors group-focus-within:text-[#00FFD1]" />
         <Input
           id="search"
           type="text"
           placeholder="Search tasks..."
           value={currentFilters.search}
           onChange={handleInputChange}
-          className="w-full"
+          className="bg-black/20 border-white/10 text-white placeholder:text-gray-500 pl-10 h-11 transition-all focus:border-[#00FFD1]/50 focus:ring-2 focus:ring-[#00FFD1]/10 rounded-xl"
         />
       </div>
 
-      {/* Priority Filter */}
-      <div>
-        <Label htmlFor="priority">Priority</Label>
-        <Select value={currentFilters.priority} onValueChange={handlePriorityChange}>
-          <SelectTrigger id="priority" className="w-[180px]">
-            <SelectValue placeholder="Filter by priority" />
+      <div className="flex flex-wrap items-center gap-3">
+        {/* Priority Filter */}
+        <Select value={currentFilters.priority || 'all'} onValueChange={handlePriorityChange}>
+          <SelectTrigger className="w-[140px] h-11 bg-black/20 border-white/10 rounded-xl transition-all focus:border-[#00FFD1]/50">
+            <SelectValue placeholder="Priority" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
             <SelectItem value="all">All Priorities</SelectItem>
             <SelectItem value="1">High</SelectItem>
             <SelectItem value="2">Medium</SelectItem>
             <SelectItem value="3">Low</SelectItem>
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Status Filter */}
-      <div>
-        <Label htmlFor="status">Status</Label>
-        <Select value={currentFilters.status} onValueChange={handleStatusChange}>
-          <SelectTrigger id="status" className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
+        {/* Status Filter */}
+        <Select value={currentFilters.status || 'all'} onValueChange={handleStatusChange}>
+          <SelectTrigger className="w-[140px] h-11 bg-black/20 border-white/10 rounded-xl transition-all focus:border-[#00FFD1]/50">
+            <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
             <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="todo">To Do</SelectItem>
             <SelectItem value="in_progress">In Progress</SelectItem>
             <SelectItem value="done">Done</SelectItem>
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Sort By */}
-      <div>
-        <Label htmlFor="sortBy">Sort By</Label>
-        <Select value={currentFilters.sortBy} onValueChange={handleSortByChange}>
-          <SelectTrigger id="sortBy" className="w-[180px]">
+        {/* Sort By */}
+        <Select value={currentFilters.sortBy || 'none'} onValueChange={handleSortByChange}>
+          <SelectTrigger className="w-[140px] h-11 bg-black/20 border-white/10 rounded-xl transition-all focus:border-[#00FFD1]/50">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">None</SelectItem>
+          <SelectContent className="bg-black/90 backdrop-blur-xl border-white/10 text-white">
+            <SelectItem value="none">Sort by</SelectItem>
             <SelectItem value="due_date">Due Date</SelectItem>
             <SelectItem value="priority">Priority</SelectItem>
             <SelectItem value="title">Title</SelectItem>
           </SelectContent>
         </Select>
-      </div>
 
-      {/* Sort Order Toggle */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleSortOrderToggle}
-        aria-label="Sort Order"
-        className="self-end"
-      >
-        <ArrowDownUp className={`h-4 w-4 ${currentFilters.sortOrder === 'desc' ? 'rotate-180' : ''}`} />
-      </Button>
+        {/* Sort Order Toggle */}
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={handleSortOrderToggle}
+          aria-label="Sort Order"
+          className="h-11 w-11 bg-black/20 border-white/10 rounded-xl hover:bg-[#00FFD1]/10 hover:text-[#00FFD1] hover:border-[#00FFD1]/30 transition-all active:scale-95"
+        >
+          <ArrowDownUp className={`h-4 w-4 transition-transform duration-300 ${currentFilters.sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+        </Button>
+      </div>
     </div>
   );
 };
