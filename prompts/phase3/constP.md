@@ -101,38 +101,38 @@ class Message(SQLModel, table=True):
     role: str = Field(sa_column=Column(Enum('user', 'assistant', name='message_role')))
     content: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
-```
 
-## 5. API Design Standards
-### Endpoint Structure:
-- Base: `/api/v1/`
-- Health: `GET /api/health`
-- Auth: `POST /api/auth/signup`, `POST /api/auth/login`
-- Tasks: `GET /api/tasks`, `POST /api/tasks`, `GET /api/tasks/{id}`, `PUT /api/tasks/{id}`, `DELETE /api/tasks/{id}`, `PATCH /api/tasks/{id}/complete`
-- Chat: `POST /api/{user_id}/chat` (stateless chat endpoint)
+5. API Design Standards
+Endpoint Structure:
+- Base: /api/v1/
+- Health: GET /api/health
+- Auth: POST /api/auth/signup, POST /api/auth/login
+- Tasks: GET /api/tasks, POST /api/tasks, GET /api/tasks/{id}, PUT /api/tasks/{id}, DELETE /api/tasks/{id}, 
+PATCH /api/tasks/{id}/complete
+- Chat: POST /api/{user_id}/chat (stateless chat endpoint)    
 
-### HTTP Methods:
-- `GET`: Retrieve resources
-- `POST`: Create new resources (including chat messages)
-- `PUT`: Update entire resources
-- `PATCH`: Partial updates (complete toggle)
-- `DELETE`: Remove resources
+HTTP Methods:
+- GET: Retrieve resources
+- POST: Create new resources (including chat messages)
+- PUT: Update entire resources
+- PATCH: Partial updates (complete toggle)
+- DELETE: Remove resources
 
-### Response Format:
-- Success: `200`/`201` with data
-- Error: Consistent error format: `{"detail": "message", "status": 400}`
-- Validation errors: `422` with field-specific messages
+Response Format:
+- Success: 200/201 with data
+- Error: Consistent error format: {"detail": "message", "status": 400}
+- Validation errors: 422 with field-specific messages
 - Chat responses: Include conversation_id, response, tool_calls array
 
-### MCP Server Standards:
-- 5 Required Tools: `add_task`, `list_tasks`, `complete_task`, `delete_task`, `update_task`
-- All tools must include `user_id` parameter for data isolation
+MCP Server Standards:
+- 5 Required Tools: add_task, list_tasks, complete_task, delete_task, update_task
+- All tools must include user_id parameter for data isolation
 - Tool responses must follow standardized JSON format
 - MCP server must run alongside FastAPI on same port
 
-## 6. Frontend Architecture
-### App Router Structure:
-```
+6. Frontend Architecture
+App Router Structure:
+
 app/
 ├── (auth)/
 │   ├── signup/page.tsx
@@ -143,10 +143,8 @@ app/
 │   └── profile/page.tsx
 ├── layout.tsx
 └── page.tsx
-```
 
-### Component Structure:
-```
+Component Structure:
 components/
 ├── ui/
 │   ├── Button.tsx
@@ -168,17 +166,17 @@ components/
 └── shared/
     ├── api.ts
     └── utils.ts
-```
 
-### ChatKit Integration:
+ChatKit Integration:
 - OpenAI ChatKit with domain key configuration
 - Integration with existing Better Auth system
 - Responsive chat interface with message history
 - Tool call visualization and confirmation
 - Typing indicators for AI responses
 
-## 7. Design System
-### Colors (Tailwind):
+7. Design System
+
+Colors (Tailwind):
 - Primary: blue-500 (#3b82f6) to purple-600 (#8b5cf6) gradient
 - Secondary: gray scale
 - Success: green-500 (#10b981)
@@ -187,199 +185,201 @@ components/
 - Chat User: blue-100 (#dbeafe)
 - Chat Assistant: gray-100 (#f3f4f6)
 
-### Typography:
+Typography:
 - Font: Inter (Google Fonts)
 - Scale: 12px, 14px, 16px, 18px, 20px, 24px, 32px
 - Weights: 400, 500, 600, 700
 
-### Spacing:
+Spacing:
 - Base: 4px
 - Scale: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64
 
-### Animations:
+Animations:
 - Library: Framer Motion
 - Duration: 150ms, 300ms, 500ms
 - Easing: cubic-bezier(0.4, 0, 0.2, 1)
 - Transitions: fade, slide, scale
-- Chat-specific: message entrance, typing indicator
 
-### Chat UI Components:
+Chat-specific: message entrance, typing indicator
+
+Chat UI Components:
 - Message bubbles with user/assistant differentiation
 - Conversation history panel with scroll preservation
 - Tool call status indicators (loading, success, error)
 - Mobile-responsive chat interface
 
-## 8. Testing Standards
-### Frontend:
-- Jest + React Testing Library
-- 80% coverage for components
-- MSW for API mocking
-- Playwright for E2E (Phase 4+5)
+8. Testing Standards
+Frontend:
+Jest + React Testing Library
+80% coverage for components
+MSW for API mocking
+Playwright for E2E (Phase 4+5)
 
-### Backend:
-- pytest with 90% coverage
-- Test database with fixtures
-- API endpoint testing with TestClient
+Backend:
+pytest with 90% coverage
+Test database with fixtures
+API endpoint testing with TestClient
 
-### AI System Testing:
-- MCP tool unit testing with mocked AI responses
-- Chat endpoint integration testing
-- Conversation flow E2E testing
-- Error handling for AI tool failures
-- Stateless architecture validation
+AI System Testing:
+MCP tool unit testing with mocked AI responses
+Chat endpoint integration testing
+Conversation flow E2E testing
+Error handling for AI tool failures
+Stateless architecture validation
 
-### Test Structure:
-- Unit tests for business logic
-- Integration tests for API endpoints
-- E2E tests for critical user flows
-- AI interaction tests for natural language commands
+Test Structure:
+Unit tests for business logic
+Integration tests for API endpoints
+E2E tests for critical user flows
+AI interaction tests for natural language commands
 
-## 9. Development Workflow
-### Git:
-- Feature branches from `main`
-- Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `ai:`
-- Pull requests with code review
-- Semantic versioning for releases
+9. Development Workflow
+Git:
+Feature branches from main
+Conventional commits: feat:, fix:, chore:, docs:, ai:
+Pull requests with code review
+Semantic versioning for releases
 
-### Spec-Kit Plus Workflow:
-- Constitution (this file)
-- Specification (`specs/` folder)
-- Plan (`plan.md`)
-- Tasks (`tasks.md`)
-- Implementation
-- Testing & Review
+Spec-Kit Plus Workflow:
+Constitution (this file)
+Specification (specs/ folder)
+Plan (plan.md)
+Tasks (tasks.md)
+Implementation
 
-### Phase 5 (Backend) Implementation Order:
-1. MCP Server setup with 5 task tools
-2. Chat endpoint with stateless design
-3. OpenAI Agents SDK integration
-4. Database migrations for new tables
-5. Integration with existing task CRUD
+Testing & Review
 
-### Phase 6 (Frontend) Implementation Order:
-1. OpenAI ChatKit setup and domain configuration
-2. Chat interface components
-3. Integration with existing auth and task systems
-4. Polish and animations
+Phase 5 (Backend) Implementation Order:
+MCP Server setup with 5 task tools
+Chat endpoint with stateless design
+OpenAI Agents SDK integration
+Database migrations for new tables
+Integration with existing task CRUD
 
-### Environment Setup:
-- Development: `localhost:3000` (frontend), `localhost:8000` (backend)
-- Staging: preview deployments
-- Production: Vercel (frontend) + Railway (backend)
-- ChatKit: Domain allowlist configuration required for production
+Phase 6 (Frontend) Implementation Order:
+OpenAI ChatKit setup and domain configuration
+Chat interface components
+Integration with existing auth and task systems
+Polish and animations
 
-## 10. Deployment Standards
-### Frontend (Vercel):
-- Automatic deployment from `main` branch
-- Preview deployments for PRs
-- Environment variables in Vercel dashboard
-- Custom domain setup
-- OpenAI ChatKit domain key configuration
+Environment Setup:
+Development: localhost:3000 (frontend), localhost:8000 (backend)
+Staging: preview deployments
+Production: Vercel (frontend) + Railway (backend)
+ChatKit: Domain allowlist configuration required for production
 
-### Backend (Railway):
-- PostgreSQL via Neon
-- Environment variables in Railway (including OpenAI API key)
-- Health check endpoint monitoring
-- Logging and monitoring setup
-- MCP server running alongside FastAPI
+10. Deployment Standards
+Frontend (Vercel):
+Automatic deployment from main branch
+Preview deployments for PRs
+Environment variables in Vercel dashboard
+Custom domain setup
+OpenAI ChatKit domain key configuration
 
-### ChatKit Requirements:
-- Frontend must be deployed first to get production URL
-- Domain must be added to OpenAI allowlist (platform.openai.com/settings/organization/security/domain-allowlist)
-- Domain key must be stored as `NEXT_PUBLIC_OPENAI_DOMAIN_KEY`
-- Local development (localhost) works without allowlist
+Backend (Railway):
+PostgreSQL via Neon
+Environment variables in Railway (including OpenAI API key)
+Health check endpoint monitoring
+Logging and monitoring setup
+MCP server running alongside FastAPI
 
-### Stateless Architecture:
-- Chat endpoint must remain stateless for horizontal scaling
-- All conversation state must persist to database
-- Server restarts must not lose conversation context
-- Load balancer must be able to route to any backend instance
+ChatKit Requirements:
+Frontend must be deployed first to get production URL
+Domain must be added to OpenAI allowlist (platform.openai.com/settings/organization/security/domain-allowlist)
+Domain key must be stored as NEXT_PUBLIC_OPENAI_DOMAIN_KEY
+Local development (localhost) works without allowlist
 
-## 11. Performance Standards
-### Frontend:
-- Lighthouse score > 90
-- First Contentful Paint < 1.5s
-- Time to Interactive < 3.5s
-- Bundle optimization
+Stateless Architecture:
+Chat endpoint must remain stateless for horizontal scaling
+All conversation state must persist to database
+Server restarts must not lose conversation context
+Load balancer must be able to route to any backend instance
 
-### Backend:
-- API response time < 200ms (p95)
-- Database query optimization
-- Connection pooling
-- Caching where appropriate
+11. Performance Standards
+Frontend:
+Lighthouse score > 90
+First Contentful Paint < 1.5s
+Time to Interactive < 3.5s
+Bundle optimization
 
-### Chat System Performance:
-- Chat response time < 2 seconds for simple queries
-- Conversation history loading < 1 second
-- MCP tool execution < 500ms
-- Concurrent chat sessions support
-- Message streaming for better perceived performance
+Backend:
+API response time < 200ms (p95)
+Database query optimization
+Connection pooling
+Caching where appropriate
 
-## 12. Success Criteria by Phase
-### Phase 1 - Foundation:
-- Monorepo: `frontend/`, `backend/`, `specs/`, `docs/`
-- Next.js 16: running on `localhost:3000`
-- FastAPI: running on `localhost:8000` with `/health` endpoint
-- Design system: Tailwind config with colors, typography
-- Basic components: `Button`, `Card`, `Input`, `Modal`, `LoadingSpinner`
+Chat System Performance:
+Chat response time < 2 seconds for simple queries
+Conversation history loading < 1 second
+MCP tool execution < 500ms
+Concurrent chat sessions support
+Message streaming for better perceived performance
 
-### Phase 2 - Authentication:
-- Better Auth: signup and login pages
-- JWT tokens: issued and validated
-- Protected routes: middleware for authentication
-- User context: available throughout app
+12. Success Criteria by Phase
+Phase 1 - Foundation:
+Monorepo: frontend/, backend/, specs/, docs/
+Next.js 16: running on localhost:3000
+FastAPI: running on localhost:8000 with /health endpoint
+Design system: Tailwind config with colors, typography
+Basic components: Button, Card, Input, Modal, LoadingSpinner
 
-### Phase 3 - Task Management:
-- Database: `users` and `tasks` tables created
-- API endpoints: full CRUD for tasks
-- User isolation: each user sees only their tasks
-- Task operations: create, read, update, delete, complete toggle
+Phase 2 - Authentication:
+Better Auth: signup and login pages
+JWT tokens: issued and validated
+Protected routes: middleware for authentication
+User context: available throughout app
 
-### Phase 4 - UI & Integration:
-- Task UI: complete interface for all operations
-- Frontend-backend integration: all API calls working
-- Testing: unit, integration, E2E tests passing
-- Deployment: both frontend and backend deployed
-- Documentation: setup guide, API docs, user guide
+Phase 3 - Task Management:
+Database: users and tasks tables created
+API endpoints: full CRUD for tasks
+User isolation: each user sees only their tasks
+Task operations: create, read, update, delete, complete toggle
 
-### Phase 5 - AI Chatbot Backend:
-- MCP Server: 5 task management tools exposed
-- Chat Endpoint: `POST /api/{user_id}/chat` working statelessly
-- Database: conversations and messages tables created
-- OpenAI Integration: Agents SDK properly configured
-- Integration: All existing task CRUD operations work via MCP tools
+Phase 4 - UI & Integration:
+Task UI: complete interface for all operations
+Frontend-backend integration: all API calls working
+Testing: unit, integration, E2E tests passing
+Deployment: both frontend and backend deployed
+Documentation: setup guide, API docs, user guide
 
-### Phase 6 - AI Chatbot Frontend:
-- ChatKit Integration: OpenAI ChatKit with domain configuration
-- Chat Interface: Users can manage tasks via natural language
-- Conversation History: Persists across sessions and server restarts
-- User Experience: Responsive, intuitive chat interface
-- Security: Domain allowlist properly configured for production
+Phase 5 - AI Chatbot Backend:
+MCP Server: 5 task management tools exposed
+Chat Endpoint: POST /api/{user_id}/chat working statelessly
+Database: conversations and messages tables created
+OpenAI Integration: Agents SDK properly configured
+Integration: All existing task CRUD operations work via MCP tools
 
-## 13. AI System Standards
-### Agent Behavior:
-- Must understand natural language commands for task management
-- Must use appropriate MCP tools based on user intent
-- Must confirm actions with friendly responses
-- Must handle errors gracefully with helpful messages
+Phase 6 - AI Chatbot Frontend:
+ChatKit Integration: OpenAI ChatKit with domain configuration
+Chat Interface: Users can manage tasks via natural language
+Conversation History: Persists across sessions and server restarts
+User Experience: Responsive, intuitive chat interface
+Security: Domain allowlist properly configured for production
 
-### MCP Tool Specifications:
-- Tools must follow exact parameter requirements
-- All tools must include `user_id` for data isolation
-- Tool responses must be standardized for agent consumption
-- Error handling must provide clear feedback to agent
+13. AI System Standards
+Agent Behavior:
+Must understand natural language commands for task management
+Must use appropriate MCP tools based on user intent
+Must confirm actions with friendly responses
+Must handle errors gracefully with helpful messages
 
-### Natural Language Understanding:
-- Support commands: add, show, list, complete, delete, update
-- Understand variations: "create", "mark as done", "remove", "change"
-- Handle contextual references: "the first task", "my meeting task"
-- Provide confirmation for all actions
+MCP Tool Specifications:
+Tools must follow exact parameter requirements
+All tools must include user_id for data isolation
+Tool responses must be standardized for agent consumption
+Error handling must provide clear feedback to agent
 
-## Governance
+Natural Language Understanding:
+Support commands: add, show, list, complete, delete, update
+Understand variations: "create", "mark as done", "remove", "change"
+Handle contextual references: "the first task", "my meeting task"
+Provide confirmation for all actions
+
+Governance
 Applicable: All 5 phases (including AI Chatbot Phase)
 Status: Active - All development must follow these standards
 
-**Version**: 2.0.0 | **Ratified**: 2026-01-13 | **Last Amended**: 2026-01-13
+Version: 2.0.0 | Ratified: 2026-01-13 | Last Amended: 2026-01-13
 
 
 ## Key Updates Made:
@@ -399,3 +399,4 @@ Status: Active - All development must follow these standards
 13. **New Section**: AI System Standards for agent behavior and tools
 
 **Version updated from 1.0.0 to 2.0.0** to reflect major addition of AI Chatbot capabilities.
+
