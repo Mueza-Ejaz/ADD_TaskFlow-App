@@ -17,7 +17,7 @@ class Message(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str = Field(index=True, nullable=False)  # Foreign key to users.id
-    conversation_id: int = Field(index=True, nullable=False)  # Foreign key to conversation.id
+    conversation_id: int = Field(foreign_key="conversations.id", index=True, nullable=False)  # Foreign key to conversation.id
     role: MessageRole = Field(sa_column=Column(SQLEnum(MessageRole)))
     content: str = Field(nullable=False)
     tool_calls: Optional[str] = Field(default=None)  # JSON string for tool call metadata

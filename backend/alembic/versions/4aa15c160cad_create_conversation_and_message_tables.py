@@ -1,7 +1,7 @@
 """Create conversation and message tables
 
 Revision ID: 4aa15c160cad
-Revises: 
+Revises:
 Create Date: 2026-01-15 09:45:08.717811
 
 """
@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+import sqlmodel.sql.sqltypes
 
 
 # revision identifiers, used by Alembic.

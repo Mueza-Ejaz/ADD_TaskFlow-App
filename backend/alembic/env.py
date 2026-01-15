@@ -12,7 +12,9 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))  # Add project root 
 
 from src.models.conversation import Conversation
 from src.models.message import Message
+from src.models.task import Task  # Add the Task model
 from sqlmodel import SQLModel
+from src.config import settings  # Import settings to get the database URL
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -63,11 +65,9 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # Use the database URL from settings instead of config file
+    from sqlalchemy import create_engine
+    connectable = create_engine(settings.DATABASE_URL, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
         context.configure(

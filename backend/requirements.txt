@@ -13,3 +13,4 @@ mcp-sdk==1.0.0
 python-multipart==0.0.20
 alembic==1.13.1
 asyncio==3.4.3
+psycopg2-binary==2.9.11

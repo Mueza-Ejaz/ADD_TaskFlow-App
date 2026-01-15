@@ -63,23 +63,23 @@ def add_task(params: AddTaskParams, db_session: Session) -> dict:
     Add a new task for a user
     """
     try:
-        # Convert user_id string to int if needed, assuming it represents a user ID
-        # In a real implementation, we'd have a user lookup mechanism
-        try:
-            user_id_int = int(params.user_id) if params.user_id.isdigit() else 1  # Default to user 1 for demo
-        except (ValueError, AttributeError):
-            user_id_int = 1  # Default fallback
+        # Use the user_id as provided (keeping it as string to match API)
+        # Since we removed the foreign key constraint, we can store the string directly
+        user_id_int = params.user_id  # Store the actual string user_id from the API
+
+        from src.schemas.task import TaskCreate
 
         task_service = TaskService(db_session)
-        task_data = {
-            "user_id": user_id_int,
-            "title": params.title,
-            "description": params.description or "",
-            "status": "pending"
-        }
+
+        # Create a TaskCreate object with the task data
+        task_create = TaskCreate(
+            title=params.title,
+            description=params.description or "",
+            status="pending"
+        )
 
         # Create the task
-        task = task_service.create_task(task_data)
+        task = task_service.create_task(task_create, user_id_int)
 
         return {
             "success": True,
@@ -100,11 +100,8 @@ def list_tasks(params: ListTasksParams, db_session: Session) -> dict:
     List tasks for a user with optional status filtering
     """
     try:
-        # Convert user_id string to int if needed
-        try:
-            user_id_int = int(params.user_id) if params.user_id.isdigit() else 1  # Default to user 1 for demo
-        except (ValueError, AttributeError):
-            user_id_int = 1  # Default fallback
+        # Use the user_id as provided (keeping it as string to match API)
+        user_id_int = params.user_id  # Store the actual string user_id from the API
 
         # Query tasks for the user
         statement = select(Task).where(Task.user_id == user_id_int)
@@ -126,10 +123,24 @@ def list_tasks(params: ListTasksParams, db_session: Session) -> dict:
             })
 
         status_filter = f" ({params.status})" if params.status else ""
+
+        # Format detailed message with task information
+        if task_list:
+            detailed_message = f"You have {len(task_list)} task(s){status_filter}:\n\n"
+            for i, task in enumerate(task_list, 1):
+                created_time = task['created_at'][:10] if task['created_at'] else "Unknown"
+                detailed_message += f"{i}. Title: {task['title']}\n"
+                if task['description']:
+                    detailed_message += f"   Description: {task['description']}\n"
+                detailed_message += f"   Status: {task['status']}\n"
+                detailed_message += f"   Created: {created_time}\n\n"
+        else:
+            detailed_message = f"You have {len(task_list)} task(s){status_filter}."
+
         return {
             "success": True,
             "tasks": task_list,
-            "message": f"You have {len(task_list)} task(s){status_filter}."
+            "message": detailed_message.strip()
         }
     except Exception as e:
         return {
@@ -145,11 +156,8 @@ def update_task(params: UpdateTaskParams, db_session: Session) -> dict:
     Update a task for a user
     """
     try:
-        # Convert user_id string to int if needed
-        try:
-            user_id_int = int(params.user_id) if params.user_id.isdigit() else 1  # Default to user 1 for demo
-        except (ValueError, AttributeError):
-            user_id_int = 1  # Default fallback
+        # Use the user_id as provided (keeping it as string to match API)
+        user_id_int = params.user_id  # Store the actual string user_id from the API
 
         # First, verify the task belongs to the user
         task = db_session.get(Task, params.task_id)
@@ -198,11 +206,8 @@ def complete_task(params: CompleteTaskParams, db_session: Session) -> dict:
     Mark a task as completed
     """
     try:
-        # Convert user_id string to int if needed
-        try:
-            user_id_int = int(params.user_id) if params.user_id.isdigit() else 1  # Default to user 1 for demo
-        except (ValueError, AttributeError):
-            user_id_int = 1  # Default fallback
+        # Use the user_id as provided (keeping it as string to match API)
+        user_id_int = params.user_id  # Store the actual string user_id from the API
 
         # First, verify the task belongs to the user
         task = db_session.get(Task, params.task_id)
@@ -245,11 +250,8 @@ def delete_task(params: DeleteTaskParams, db_session: Session) -> dict:
     Delete a task
     """
     try:
-        # Convert user_id string to int if needed
-        try:
-            user_id_int = int(params.user_id) if params.user_id.isdigit() else 1  # Default to user 1 for demo
-        except (ValueError, AttributeError):
-            user_id_int = 1  # Default fallback
+        # Use the user_id as provided (keeping it as string to match API)
+        user_id_int = params.user_id  # Store the actual string user_id from the API
 
         # First, verify the task belongs to the user
         task = db_session.get(Task, params.task_id)
