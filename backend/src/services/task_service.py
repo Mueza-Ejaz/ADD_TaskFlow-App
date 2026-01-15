@@ -7,14 +7,14 @@ class TaskService:
     def __init__(self, session: Session):
         self.session = session
 
-    def create_task(self, task_create: TaskCreate, user_id: int) -> Task:
+    def create_task(self, task_create: TaskCreate, user_id: str) -> Task:
         task = Task(**task_create.model_dump(), user_id=user_id)
         self.session.add(task)
         self.session.commit()
         self.session.refresh(task)
         return task
 
-    def get_task_by_id(self, task_id: int, user_id: int) -> Optional[Task]:
+    def get_task_by_id(self, task_id: int, user_id: str) -> Optional[Task]:
         task = self.session.get(Task, task_id)
         if task and task.user_id == user_id:
             return task
@@ -22,7 +22,7 @@ class TaskService:
 
     def get_user_tasks(
         self,
-        user_id: int,
+        user_id: str,
         status: Optional[str] = None,
         priority: Optional[int] = None,
         search: Optional[str] = None,
@@ -49,7 +49,7 @@ class TaskService:
         tasks = self.session.exec(query).all()
         return tasks
 
-    def update_task(self, task_id: int, task_update: TaskUpdate, user_id: int) -> Optional[Task]:
+    def update_task(self, task_id: int, task_update: TaskUpdate, user_id: str) -> Optional[Task]:
         task = self.session.get(Task, task_id)
         if task and task.user_id == user_id:
             task_data = task_update.model_dump(exclude_unset=True)
@@ -61,7 +61,7 @@ class TaskService:
             return task
         return None
 
-    def delete_task(self, task_id: int, user_id: int) -> bool:
+    def delete_task(self, task_id: int, user_id: str) -> bool:
         task = self.session.get(Task, task_id)
         if task and task.user_id == user_id:
             self.session.delete(task)

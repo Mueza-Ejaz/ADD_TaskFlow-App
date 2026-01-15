@@ -3,6 +3,11 @@ from .config import settings
 from sqlmodel.sql.expression import Select, SelectOfScalar
 import os
 
+# Import models to register them with SQLModel metadata
+from .models.conversation import Conversation
+from .models.message import Message
+from .models.task import Task
+
 # Suppress warning for SQLModel's Select being a generic type
 # See: https://sqlmodel.tiangolo.com/tutorial/where/#sqlmodel-select-and-selectofscalar
 # for why this is needed for Python 3.9+
