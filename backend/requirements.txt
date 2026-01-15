@@ -8,3 +8,8 @@ pydantic-settings==2.12.0
 pytest==7.4.3
 httpx==0.27.0
 pytest-asyncio==0.23.5
+openai==1.57.4
+mcp-sdk==1.0.0
+python-multipart==0.0.20
+alembic==1.13.1
+asyncio==3.4.3

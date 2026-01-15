@@ -7,6 +7,7 @@ from src.config import settings
 from src.api.v1.health import health_router
 from src.api.v1.endpoints.auth import auth_router
 from src.api.v1.endpoints.tasks import task_router
+from src.api.chat import router as chat_router  # Chat API router
 from src.database import create_db_and_tables
 
 # Custom Security Headers Middleware
@@ -63,3 +64,4 @@ async def read_root():
 app.include_router(health_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(task_router, prefix="/api/v1")
+app.include_router(chat_router)  # Chat API router

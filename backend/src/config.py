@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 24 hours
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001"
+    GEMINI_API_KEY: str = ""  # Add GEMINI_API_KEY to settings
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
