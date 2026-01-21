@@ -83,3 +83,5 @@
 - [ ] T033 Implement task list auto-refresh trigger in `frontend/hooks/useChat.ts`
 - [ ] T034 Add error boundary for chat component in `frontend/components/chatbot/ChatErrorBoundary.tsx`
 - [ ] T035 Final accessibility audit (ARIA labels, keyboard nav) in `frontend/components/chatbot/`
+
+

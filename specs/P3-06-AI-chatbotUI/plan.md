@@ -92,3 +92,4 @@ frontend/
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
 | ChatKit Library | Requires specific domain config | Building a custom LLM UI from scratch is high-effort and error-prone. |
+
